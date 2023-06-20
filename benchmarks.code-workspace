@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "server/encryptions/int-ed25519"
+		},
+		{
+			"path": "server/encryptions/int-hmac-sha256"
+		},
+		{
+			"path": "server/encryptions/int-hmac-sha512"
+		},
+		{
+			"path": "server/encryptions/nothing"
+		},
+		{
+			"path": "server/encryptions/int-postgres-token"
+		},
+		{
+			"path": "server/encryptions/int-jwt-ed25519"
+		}
+	],
+	"settings": {}
+}

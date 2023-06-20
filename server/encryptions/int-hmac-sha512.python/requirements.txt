@@ -1,0 +1,26 @@
+## The following requirements were added by pip freeze:
+aiofiles==23.1.0
+certifi==2023.5.7
+charset-normalizer==3.1.0
+html5tagger==1.3.0
+httptools==0.5.0
+idna==3.4
+multidict==6.0.4
+numpy==1.24.3
+packaging==23.1
+pandas==2.0.2
+python-dateutil==2.8.2
+pytz==2023.3
+PyYAML==6.0
+requests==2.31.0
+sanic==23.3.0
+Sanic-Cors==2.2.0
+sanic-ext==23.3.0
+sanic-routing==22.8.0
+six==1.16.0
+tracerite==1.1.0
+tzdata==2023.3
+ujson==5.8.0
+urllib3==2.0.3
+uvloop==0.17.0
+websockets==11.0.3
