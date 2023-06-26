@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/golang-jwt/jwt/v5 v5.0.0
+	github.com/mackerelio/go-osstat v0.2.4
 	gorm.io/driver/postgres v1.5.0
 	gorm.io/gen v0.3.22
 	gorm.io/gorm v1.25.1

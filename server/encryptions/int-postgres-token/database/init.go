@@ -3,6 +3,7 @@ package database
 
 import (
 	"int-db-token/model"
+	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gen"
@@ -15,6 +16,16 @@ type Querier interface {
 	FilterWithNameAndRole(name, role string) ([]gen.T, error)
 }
 
+func getDsn() string {
+	host := os.Getenv("POSTGRES_HOST")
+	if host == "" {
+		host = "localhost"
+	}
+
+	dsn := "host=localhost user=postgres password=postgres dbname=postgres port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	return dsn
+}
+
 func Migrate() *gorm.DB {
 	// Initialize the generator with configuration
 	g := gen.NewGenerator(gen.Config{
@@ -22,7 +33,7 @@ func Migrate() *gorm.DB {
 		Mode:    gen.WithoutContext | gen.WithDefaultQuery | gen.WithQueryInterface, // generate mode
 	})
 
-	dsn := "host=localhost user=postgres password=postgres dbname=postgres port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	dsn := getDsn()
 	gormdb, _ := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
@@ -46,7 +57,7 @@ func Migrate() *gorm.DB {
 }
 
 func Init() *gorm.DB {
-	dsn := "host=localhost user=postgres password=postgres dbname=postgres port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	dsn := getDsn()
 	gormdb, _ := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		// DisableForeignKeyConstraintWhenMigrating: true,
 	})

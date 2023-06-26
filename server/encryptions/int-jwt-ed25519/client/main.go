@@ -13,13 +13,19 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mackerelio/go-osstat/cpu"
+	"github.com/mackerelio/go-osstat/memory"
 )
 
 type Request struct {
-	Id     int64 `json:"id"`
-	Worker int64 `json:"worker"`
-	Start  int64 `json:"start"`
-	End    int64 `json:"end"`
+	Id       int64  `json:"id"`
+	Worker   int64  `json:"worker"`
+	Start    int64  `json:"start"`
+	End      int64  `json:"end"`
+	CpuStart uint64 `json:"cpuStart"`
+	CpuEnd   uint64 `json:"cpuEnd"`
+	Memory   uint64 `json:"memory"`
+	Swap     uint64 `json:"swap"`
 }
 
 var requests = map[string]*Request{}
@@ -64,44 +70,120 @@ func result() {
 	howMany := len(requests)
 	requestsMutex.Unlock()
 
-	results := make([]int64, howMany)
+	durations := make([]int64, howMany)
+	memory := make([]int64, howMany)
+	swap := make([]int64, howMany)
+	cpu := make([]uint64, howMany)
 
 	var n int64 = 0
 	requestsMutex.Lock()
 	for _, request := range requests {
-		results[n] = request.End - request.Start
+		durations[n] = request.End - request.Start
+		memory[n] = int64(request.Memory)
+		swap[n] = int64(request.Swap)
+		cpu[n] = request.CpuEnd - request.CpuStart
 		n++
 	}
 	requestsMutex.Unlock()
 
-	sort.Slice(results, func(i, j int) bool {
-		return results[i] < results[j]
+	sort.Slice(durations, func(i, j int) bool {
+		return durations[i] < durations[j]
+	})
+
+	sort.Slice(memory, func(i, j int) bool {
+		return memory[i] < memory[j]
+	})
+
+	sort.Slice(swap, func(i, j int) bool {
+		return swap[i] < swap[j]
+	})
+
+	sort.Slice(cpu, func(i, j int) bool {
+		return cpu[i] < cpu[j]
 	})
 
 	medianIndex := int(float64(howMany) / 2)
-	median := results[medianIndex]
-	min := results[0]
-	max := results[howMany-1]
 
-	var average int64 = 0
+	msMedian := durations[medianIndex]
+	msMin := durations[0]
+	msMax := durations[howMany-1]
 
-	for _, result := range results {
-		average += result
+	memoryMedian := memory[medianIndex]
+	memoryMin := memory[0]
+	memoryMax := memory[howMany-1]
+
+	swapMedian := swap[medianIndex]
+	swapMin := swap[0]
+	swapMax := swap[howMany-1]
+
+	cpuMedian := cpu[medianIndex]
+	cpuMin := cpu[0]
+	cpuMax := cpu[howMany-1]
+
+	var msAverage int64 = 0
+
+	for _, result := range durations {
+		msAverage += result
 	}
 
-	average = average / int64(howMany)
+	msAverage = msAverage / int64(howMany)
+
+	var memoryAverage int64 = 0
+
+	for _, result := range memory {
+		memoryAverage += result
+	}
+
+	memoryAverage = memoryAverage / int64(howMany)
+
+	var swapAverage int64 = 0
+
+	for _, result := range swap {
+		swapAverage += result
+	}
+
+	swapAverage = swapAverage / int64(howMany)
+
+	var cpuAverage uint64 = 0
+
+	for _, result := range cpu {
+		cpuAverage += result
+	}
+
+	cpuAverage = cpuAverage / uint64(howMany)
 
 	result := ""
 
 	lines := []string{
 		"",
-		"Summary",
+		"Responses",
 		"",
-		"- Median was " + strconv.FormatInt(median, 10),
-		"- Average was " + strconv.FormatInt(average, 10),
-		"- Min was " + strconv.FormatInt(min, 10),
-		"- Max was " + strconv.FormatInt(max, 10),
+		"- Median was " + strconv.FormatInt(msMedian, 10),
+		"- Average was " + strconv.FormatInt(msAverage, 10),
+		"- Min was " + strconv.FormatInt(msMin, 10),
+		"- Max was " + strconv.FormatInt(msMax, 10),
 		"- About " + strconv.FormatInt(int64(howMany)/10, 10) + " requests per second",
+		"",
+		"CPU",
+		"",
+		"- Median was " + strconv.FormatInt(int64(cpuMedian), 10) + "Hz",
+		"- Average was " + strconv.FormatInt(int64(cpuAverage), 10) + "Hz",
+		"- Min was " + strconv.FormatInt(int64(cpuMin), 10) + "Hz",
+		"- Max was " + strconv.FormatInt(int64(cpuMax), 10) + "Hz",
+		"",
+		"RAM",
+		"",
+		"- Median was " + strconv.FormatInt(memoryMedian/1024/1024, 10),
+		"- Average was " + strconv.FormatInt(memoryAverage/1024/1024, 10),
+		"- Min was " + strconv.FormatInt(memoryMin/1024/1024, 10),
+		"- Max was " + strconv.FormatInt(memoryMax/1024/1024, 10),
+		"",
+		"SWAP",
+		"",
+		"- Median was " + strconv.FormatInt(swapMedian/1024/1024, 10),
+		"- Average was " + strconv.FormatInt(swapAverage/1024/1024, 10),
+		"- Min was " + strconv.FormatInt(swapMin/1024/1024, 10),
+		"- Max was " + strconv.FormatInt(swapMax/1024/1024, 10),
 		"",
 		"",
 	}
@@ -140,17 +222,26 @@ func worker(number int64) {
 		}
 		postBody, _ := json.Marshal(x)
 		responseBody := bytes.NewBuffer(postBody)
+		before, _ := cpu.Get()
+
 		start := time.Now().UnixMilli()
 		http.Post("http://localhost:3000/", "application/json", responseBody)
 		end := time.Now().UnixMilli()
+		after, _ := cpu.Get()
+		memory, _ := memory.Get()
+
 		requestsMutex.Lock()
 		key := strconv.FormatInt(number, 10) + "-" + strconv.FormatInt(lastId, 10)
 
 		requests[key] = &Request{
-			Id:     lastId,
-			Worker: number,
-			Start:  start,
-			End:    end,
+			Id:       lastId,
+			Worker:   number,
+			Start:    start,
+			End:      end,
+			Memory:   memory.Used,
+			Swap:     memory.SwapUsed,
+			CpuStart: before.User,
+			CpuEnd:   after.User,
 		}
 		requestsMutex.Unlock()
 	}
