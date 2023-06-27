@@ -63,11 +63,15 @@ serve-go server/encryptions/int-jwt-ed25519
 export POSTGRES_HOST=""
 serve-go server/encryptions/int-postgres-token
 
-# test with external db
+test with external db
 export POSTGRES_HOST="xyz.preview.app.github.dev"
 serve-go server/encryptions/int-postgres-token
 
 serve-go server/encryptions/int-redis-token
-# test with external db
+
+# test with external db (actually not working)
 # export REDIS_HOST="xyz.preview.app.github.dev"
 # serve-go server/encryptions/int-redis-token
+
+serve-go server/encryptions/int-mongo-token
+

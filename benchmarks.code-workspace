@@ -23,6 +23,9 @@
 		},
 		{
 			"path": "server/encryptions/int-redis-token"
+		},
+		{
+			"path": "server/encryptions/int-mongo-token"
 		}
 	],
 	"settings": {}
