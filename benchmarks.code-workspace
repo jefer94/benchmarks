@@ -20,6 +20,9 @@
 		},
 		{
 			"path": "server/encryptions/int-jwt-ed25519"
+		},
+		{
+			"path": "server/encryptions/int-redis-token"
 		}
 	],
 	"settings": {}

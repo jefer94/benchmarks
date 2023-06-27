@@ -5,24 +5,24 @@ Responses
 - Median was 3ms
 - Average was 5ms
 - Min was 0ms
-- Max was 57ms
-- About 3759 requests per second
+- Max was 67ms
+- About 3561 requests per second
 
 CPU (based in amount of cycles waited)
 
 - Median was 0Hz
-- Average was 0Hz
+- Average was 1Hz
 - Min was 0Hz
-- Max was 40Hz
+- Max was 30Hz
 
 RAM
 
-- Median was 5554MB
-- Average was 5478MB
-- Min was 4479MB
-- Max was 6221MB
-- Delta was 1741MB
-- About 0.463MB per request
+- Median was 5571MB
+- Average was 5615MB
+- Min was 4544MB
+- Max was 6541MB
+- Delta was 1996MB
+- About 0.561MB per request
 
 SWAP
 
@@ -35,27 +35,27 @@ SWAP
 
 Responses
 
-- Median was 5ms
-- Average was 5ms
+- Median was 6ms
+- Average was 6ms
 - Min was 0ms
-- Max was 62ms
-- About 3306 requests per second
+- Max was 68ms
+- About 3185 requests per second
 
 CPU (based in amount of cycles waited)
 
 - Median was 0Hz
 - Average was 1Hz
 - Min was 0Hz
-- Max was 40Hz
+- Max was 55Hz
 
 RAM
 
-- Median was 6149MB
-- Average was 6126MB
-- Min was 4471MB
-- Max was 7440MB
-- Delta was 2968MB
-- About 0.898MB per request
+- Median was 6198MB
+- Average was 6185MB
+- Min was 4576MB
+- Max was 7498MB
+- Delta was 2922MB
+- About 0.917MB per request
 
 SWAP
 
@@ -68,27 +68,27 @@ SWAP
 
 Responses
 
-- Median was 5ms
+- Median was 6ms
 - Average was 5ms
 - Min was 0ms
-- Max was 84ms
-- About 3315 requests per second
+- Max was 59ms
+- About 3233 requests per second
 
 CPU (based in amount of cycles waited)
 
 - Median was 0Hz
 - Average was 1Hz
 - Min was 0Hz
-- Max was 46Hz
+- Max was 40Hz
 
 RAM
 
-- Median was 6175MB
-- Average was 6137MB
-- Min was 4471MB
-- Max was 7428MB
-- Delta was 2957MB
-- About 0.892MB per request
+- Median was 6204MB
+- Average was 6184MB
+- Min was 4541MB
+- Max was 7444MB
+- Delta was 2902MB
+- About 0.898MB per request
 
 SWAP
 
@@ -101,11 +101,11 @@ SWAP
 
 Responses
 
-- Median was 5ms
+- Median was 6ms
 - Average was 5ms
 - Min was 0ms
-- Max was 105ms
-- About 3293 requests per second
+- Max was 92ms
+- About 3209 requests per second
 
 CPU (based in amount of cycles waited)
 
@@ -116,12 +116,12 @@ CPU (based in amount of cycles waited)
 
 RAM
 
-- Median was 6225MB
-- Average was 6159MB
-- Min was 4482MB
-- Max was 7476MB
-- Delta was 2994MB
-- About 0.909MB per request
+- Median was 6239MB
+- Average was 6209MB
+- Min was 4551MB
+- Max was 7641MB
+- Delta was 3090MB
+- About 0.963MB per request
 
 SWAP
 
@@ -134,27 +134,27 @@ SWAP
 
 Responses
 
-- Median was 5ms
+- Median was 6ms
 - Average was 5ms
 - Min was 0ms
-- Max was 95ms
-- About 3314 requests per second
+- Max was 94ms
+- About 3231 requests per second
 
 CPU (based in amount of cycles waited)
 
 - Median was 0Hz
 - Average was 1Hz
 - Min was 0Hz
-- Max was 39Hz
+- Max was 40Hz
 
 RAM
 
-- Median was 6191MB
-- Average was 6161MB
-- Min was 4472MB
-- Max was 7452MB
-- Delta was 2980MB
-- About 0.899MB per request
+- Median was 6206MB
+- Average was 6196MB
+- Min was 4522MB
+- Max was 7527MB
+- Delta was 3005MB
+- About 0.930MB per request
 
 SWAP
 
@@ -170,24 +170,24 @@ Responses
 - Median was 3ms
 - Average was 7ms
 - Min was 0ms
-- Max was 103ms
-- About 2705 requests per second
+- Max was 118ms
+- About 2718 requests per second
 
 CPU (based in amount of cycles waited)
 
-- Median was 4Hz
+- Median was 3Hz
 - Average was 5Hz
 - Min was 0Hz
-- Max was 62Hz
+- Max was 64Hz
 
 RAM
 
-- Median was 5179MB
-- Average was 5331MB
-- Min was 4483MB
-- Max was 6815MB
-- Delta was 2332MB
-- About 0.862MB per request
+- Median was 5169MB
+- Average was 5343MB
+- Min was 4540MB
+- Max was 6797MB
+- Delta was 2256MB
+- About 0.830MB per request
 
 SWAP
 
@@ -200,27 +200,60 @@ SWAP
 
 Responses
 
-- Median was 4ms
-- Average was 8ms
+- Median was 3ms
+- Average was 7ms
 - Min was 0ms
-- Max was 108ms
-- About 2333 requests per second
+- Max was 104ms
+- About 2489 requests per second
 
 CPU (based in amount of cycles waited)
 
 - Median was 3Hz
 - Average was 5Hz
 - Min was 0Hz
-- Max was 67Hz
+- Max was 62Hz
 
 RAM
 
-- Median was 5088MB
-- Average was 5236MB
-- Min was 4487MB
-- Max was 6528MB
-- Delta was 2040MB
-- About 0.875MB per request
+- Median was 5060MB
+- Average was 5242MB
+- Min was 4536MB
+- Max was 6487MB
+- Delta was 1951MB
+- About 0.784MB per request
+
+SWAP
+
+- Median was 0MB
+- Average was 0MB
+- Min was 0MB
+- Max was 0MB
+
+## Encryption, JWT ED25519 saved in Redis Database (external)
+
+Responses
+
+- Median was 6ms
+- Average was 5ms
+- Min was 0ms
+- Max was 78ms
+- About 3257 requests per second
+
+CPU (based in amount of cycles waited)
+
+- Median was 0Hz
+- Average was 1Hz
+- Min was 0Hz
+- Max was 35Hz
+
+RAM
+
+- Median was 6131MB
+- Average was 6129MB
+- Min was 4511MB
+- Max was 7513MB
+- Delta was 3002MB
+- About 0.921MB per request
 
 SWAP
 

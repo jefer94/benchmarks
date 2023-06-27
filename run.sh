@@ -60,9 +60,14 @@ serve-go server/encryptions/int-hmac-sha256
 serve-go server/encryptions/int-hmac-sha512
 serve-go server/encryptions/int-ed25519
 serve-go server/encryptions/int-jwt-ed25519
+export POSTGRES_HOST=""
 serve-go server/encryptions/int-postgres-token
 
 # test with external db
-# export POSTGRES_HOST="xyz.preview.app.github.dev"
-# serve-go server/encryptions/int-postgres-token
+export POSTGRES_HOST="xyz.preview.app.github.dev"
+serve-go server/encryptions/int-postgres-token
 
+serve-go server/encryptions/int-redis-token
+# test with external db
+# export REDIS_HOST="xyz.preview.app.github.dev"
+# serve-go server/encryptions/int-redis-token
