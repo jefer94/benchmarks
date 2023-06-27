@@ -2,13 +2,13 @@
 
 Responses
 
-- Median was 2
-- Average was 5
-- Min was 0
-- Max was 66
-- About 3757 requests per second
+- Median was 3ms
+- Average was 5ms
+- Min was 0ms
+- Max was 57ms
+- About 3759 requests per second
 
-CPU
+CPU (based in amount of cycles waited)
 
 - Median was 0Hz
 - Average was 0Hz
@@ -17,201 +17,215 @@ CPU
 
 RAM
 
-- Median was 5619
-- Average was 5555
-- Min was 4545
-- Max was 6299
+- Median was 5554MB
+- Average was 5478MB
+- Min was 4479MB
+- Max was 6221MB
+- Delta was 1741MB
+- About 0.463MB per request
 
 SWAP
 
-- Median was 0
-- Average was 0
-- Min was 0
-- Max was 0
+- Median was 0MB
+- Average was 0MB
+- Min was 0MB
+- Max was 0MB
 
 ## Encryption, internal HMAC-SHA256, external nothing
 
 Responses
 
-- Median was 5
-- Average was 5
-- Min was 0
-- Max was 88
-- About 3310 requests per second
+- Median was 5ms
+- Average was 5ms
+- Min was 0ms
+- Max was 62ms
+- About 3306 requests per second
 
-CPU
+CPU (based in amount of cycles waited)
 
 - Median was 0Hz
 - Average was 1Hz
 - Min was 0Hz
-- Max was 45Hz
+- Max was 40Hz
 
 RAM
 
-- Median was 6240
-- Average was 6221
-- Min was 4565
-- Max was 7570
+- Median was 6149MB
+- Average was 6126MB
+- Min was 4471MB
+- Max was 7440MB
+- Delta was 2968MB
+- About 0.898MB per request
 
 SWAP
 
-- Median was 0
-- Average was 0
-- Min was 0
-- Max was 0
+- Median was 0MB
+- Average was 0MB
+- Min was 0MB
+- Max was 0MB
 
 ## Encryption, internal HMAC-SHA512, external nothing
 
 Responses
 
-- Median was 5
-- Average was 5
-- Min was 0
-- Max was 78
-- About 3297 requests per second
+- Median was 5ms
+- Average was 5ms
+- Min was 0ms
+- Max was 84ms
+- About 3315 requests per second
 
-CPU
+CPU (based in amount of cycles waited)
 
 - Median was 0Hz
 - Average was 1Hz
 - Min was 0Hz
-- Max was 47Hz
+- Max was 46Hz
 
 RAM
 
-- Median was 6231
-- Average was 6221
-- Min was 4551
-- Max was 7548
+- Median was 6175MB
+- Average was 6137MB
+- Min was 4471MB
+- Max was 7428MB
+- Delta was 2957MB
+- About 0.892MB per request
 
 SWAP
 
-- Median was 0
-- Average was 0
-- Min was 0
-- Max was 0
+- Median was 0MB
+- Average was 0MB
+- Min was 0MB
+- Max was 0MB
 
 ## Encryption, internal ED25519, external nothing
 
 Responses
 
-- Median was 5
-- Average was 5
-- Min was 0
-- Max was 95
-- About 3294 requests per second
+- Median was 5ms
+- Average was 5ms
+- Min was 0ms
+- Max was 105ms
+- About 3293 requests per second
 
-CPU
+CPU (based in amount of cycles waited)
 
 - Median was 0Hz
 - Average was 1Hz
 - Min was 0Hz
-- Max was 37Hz
+- Max was 44Hz
 
 RAM
 
-- Median was 6225
-- Average was 6203
-- Min was 4533
-- Max was 7531
+- Median was 6225MB
+- Average was 6159MB
+- Min was 4482MB
+- Max was 7476MB
+- Delta was 2994MB
+- About 0.909MB per request
 
 SWAP
 
-- Median was 0
-- Average was 0
-- Min was 0
-- Max was 0
+- Median was 0MB
+- Average was 0MB
+- Min was 0MB
+- Max was 0MB
 
 ## Encryption, internal JWT ED25519, external nothing
 
 Responses
 
-- Median was 5
-- Average was 5
-- Min was 0
-- Max was 106
-- About 3265 requests per second
+- Median was 5ms
+- Average was 5ms
+- Min was 0ms
+- Max was 95ms
+- About 3314 requests per second
 
-CPU
+CPU (based in amount of cycles waited)
 
 - Median was 0Hz
 - Average was 1Hz
 - Min was 0Hz
-- Max was 38Hz
+- Max was 39Hz
 
 RAM
 
-- Median was 6188
-- Average was 6198
-- Min was 4532
-- Max was 7525
+- Median was 6191MB
+- Average was 6161MB
+- Min was 4472MB
+- Max was 7452MB
+- Delta was 2980MB
+- About 0.899MB per request
 
 SWAP
 
-- Median was 0
-- Average was 0
-- Min was 0
-- Max was 0
+- Median was 0MB
+- Average was 0MB
+- Min was 0MB
+- Max was 0MB
 
-## Encryption, JWT ED25519 saved in Postgres Database (external)
+## Encryption, JWT ED25519 saved in Postgres Database
 
 Responses
 
-- Median was 4
-- Average was 7
-- Min was 0
-- Max was 110
-- About 2628 requests per second
+- Median was 3ms
+- Average was 7ms
+- Min was 0ms
+- Max was 103ms
+- About 2705 requests per second
 
-CPU
+CPU (based in amount of cycles waited)
 
 - Median was 4Hz
 - Average was 5Hz
 - Min was 0Hz
-- Max was 76Hz
+- Max was 62Hz
 
 RAM
 
-- Median was 5260
-- Average was 5394
-- Min was 4541
-- Max was 6855
+- Median was 5179MB
+- Average was 5331MB
+- Min was 4483MB
+- Max was 6815MB
+- Delta was 2332MB
+- About 0.862MB per request
 
 SWAP
 
-- Median was 0
-- Average was 0
-- Min was 0
-- Max was 0
+- Median was 0MB
+- Average was 0MB
+- Min was 0MB
+- Max was 0MB
 
 ## Encryption, JWT ED25519 saved in Postgres Database (external)
 
 Responses
 
-- Median was 5
-- Average was 9
-- Min was 0
-- Max was 113
-- About 2133 requests per second
+- Median was 4ms
+- Average was 8ms
+- Min was 0ms
+- Max was 108ms
+- About 2333 requests per second
 
-CPU
+CPU (based in amount of cycles waited)
 
-- Median was 4Hz
-- Average was 6Hz
+- Median was 3Hz
+- Average was 5Hz
 - Min was 0Hz
-- Max was 70Hz
+- Max was 67Hz
 
 RAM
 
-- Median was 5324
-- Average was 5373
-- Min was 4547
-- Max was 6651
+- Median was 5088MB
+- Average was 5236MB
+- Min was 4487MB
+- Max was 6528MB
+- Delta was 2040MB
+- About 0.875MB per request
 
 SWAP
 
-- Median was 0
-- Average was 0
-- Min was 0
-- Max was 0
+- Median was 0MB
+- Average was 0MB
+- Min was 0MB
+- Max was 0MB
 
