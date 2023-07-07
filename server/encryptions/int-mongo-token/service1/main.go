@@ -142,7 +142,11 @@ func endpoint(c *gin.Context) {
 	client := &http.Client{}
 	req, _ := http.NewRequest("POST", "http://localhost:4000/", responseBody)
 	req.Header.Set("Authorization", "Bearer "+token.Key)
-	client.Do(req)
+	response, _ := client.Do(req)
+
+	if response.StatusCode != 200 {
+		fmt.Println("Client - Status code ", response.StatusCode)
+	}
 
 	c.IndentedJSON(200, request)
 }

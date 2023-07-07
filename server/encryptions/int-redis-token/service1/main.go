@@ -7,6 +7,7 @@ import (
 	"crypto/x509"
 	"encoding/json"
 	"encoding/pem"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -102,7 +103,11 @@ func endpoint(c *gin.Context) {
 	req, _ := http.NewRequest("POST", "http://localhost:4000/", responseBody)
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("User", "1")
-	client.Do(req)
+	response, _ := client.Do(req)
+
+	if response.StatusCode != 200 {
+		fmt.Println("Client - Status code ", response.StatusCode)
+	}
 
 	c.IndentedJSON(200, request)
 }

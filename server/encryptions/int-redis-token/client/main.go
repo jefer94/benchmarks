@@ -33,6 +33,7 @@ var requestsMutex = sync.RWMutex{}
 var lastId int64 = 0
 
 func main() {
+	time.Sleep(time.Second * 5)
 	x := api{requests: &requests}
 	router := gin.New()
 	router.Use(
@@ -233,7 +234,7 @@ func worker(number int64) {
 		before, _ := cpu.Get()
 
 		start := time.Now().UnixMilli()
-		http.Post("http://localhost:3000/", "application/json", responseBody)
+		response, err := http.Post("http://localhost:3000/", "application/json", responseBody)
 		end := time.Now().UnixMilli()
 		after, _ := cpu.Get()
 		memory, _ := memory.Get()
@@ -241,15 +242,17 @@ func worker(number int64) {
 		requestsMutex.Lock()
 		key := strconv.FormatInt(number, 10) + "-" + strconv.FormatInt(lastId, 10)
 
-		requests[key] = &Request{
-			Id:       lastId,
-			Worker:   number,
-			Start:    start,
-			End:      end,
-			Memory:   memory.Used,
-			Swap:     memory.SwapUsed,
-			CpuStart: before.User,
-			CpuEnd:   after.User,
+		if err == nil && response.StatusCode == 200 {
+			requests[key] = &Request{
+				Id:       lastId,
+				Worker:   number,
+				Start:    start,
+				End:      end,
+				Memory:   memory.Used,
+				Swap:     memory.SwapUsed,
+				CpuStart: before.User,
+				CpuEnd:   after.User,
+			}
 		}
 		requestsMutex.Unlock()
 	}

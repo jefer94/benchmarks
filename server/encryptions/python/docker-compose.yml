@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  mongodb:
+    image: bitnami/mongodb:latest
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGODB_USERNAME=root
+      - MONGODB_PASSWORD=example
+      - MONGODB_DATABASE=benchmarks
+      - MONGODB_ROOT_PASSWORD=example
+
+
+  redis:
+    image: redis/redis-stack
+    volumes:
+      - redis_data:/data:rw
+    ports:
+      - 6379:6379
+    restart: unless-stopped
+  
+  postgres:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+
+volumes:
+  db:
+    driver: local
+
+  redis_data: {}
+
+

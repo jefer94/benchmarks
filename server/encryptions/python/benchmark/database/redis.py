@@ -1,0 +1,66 @@
+
+
+from datetime import datetime, timedelta
+import random
+import jwt
+import base64
+
+from benchmark import generators
+
+with open(".ed25519.public_key.pem", "rb") as f:
+    public_key = f.read()
+    public_key = base64.b64encode(public_key)
+
+
+with open(".ed25519.private_key.pem", "rb") as f:
+    private_key = f.read()
+    private_key = base64.b64encode(private_key)
+
+
+def service1(body={}, headers={}, query_params={}):
+    payload = {
+        'user_id': headers.get('User'),
+        'exp': datetime.utcnow() + timedelta(minutes=30),
+    }
+    token = jwt.encode(payload, private_key, algorithm="HS256")
+
+    service2(body, {**headers, 'Authorization': f'Token {token}'}, query_params)
+    return {'status': 'ok'}, {}
+
+
+def service2(body={}, headers={}, query_params={}):
+    token = headers.pop('Authorization', None).replace('Token ', '')
+
+    try:
+        jwt.decode(token, private_key, algorithms=["HS256"])
+
+    except:
+        print('error in service 2', __file__)
+        return {'status': 'invalid'}, {}
+
+    return {'status': 'ok'}, {}
+
+
+def short():
+    global shorts
+    body = shorts.pop()
+    headers = {
+        'User': random.randint(1, 20),
+    }
+    service1(body, headers)
+
+def medium():
+    global mediums
+    body = mediums.pop()
+    headers = {
+        'User': random.randint(1, 20),
+    }
+    service1(body, headers)
+
+def big():
+    global bigs
+    body = bigs.pop()
+    headers = {
+        'User': random.randint(1, 20),
+    }
+    service1(body, headers)

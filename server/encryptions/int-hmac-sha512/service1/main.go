@@ -6,6 +6,7 @@ import (
 	"crypto/sha512"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -65,7 +66,11 @@ func endpoint(c *gin.Context) {
 	client := &http.Client{}
 	req, _ := http.NewRequest("POST", "http://localhost:4000/", responseBody)
 	req.Header.Set("Signature", hex.EncodeToString(signature))
-	client.Do(req)
+	response, _ := client.Do(req)
+
+	if response.StatusCode != 200 {
+		fmt.Println("Client - Status code ", response.StatusCode)
+	}
 
 	c.IndentedJSON(200, request)
 }
