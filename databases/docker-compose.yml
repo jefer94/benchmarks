@@ -1,0 +1,154 @@
+version: '3'
+
+services:
+  mongo1:
+    image: mongo:latest
+    ports:
+      - "27011:27017"
+    command: --replSet my-mongo-set --keyFile /etc/mongo/mongo-keyfile
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongodata1:/data/db
+      - /home/jefer/dev/benchmarks/databases/python/conf/mongo/key:/etc/mongo/mongo-keyfile:ro
+
+  mongo2:
+    image: mongo:latest
+    ports:
+      - "27012:27017"
+    command: --replSet my-mongo-set --keyFile /etc/mongo/mongo-keyfile
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongodata2:/data/db
+      - /home/jefer/dev/benchmarks/databases/python/conf/mongo/key:/etc/mongo/mongo-keyfile:ro
+
+  mongo3:
+    image: mongo:latest
+    ports:
+      - "27013:27017"
+    command: --replSet my-mongo-set --keyFile /etc/mongo/mongo-keyfile
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongodata3:/data/db
+      - /home/jefer/dev/benchmarks/databases/python/conf/mongo/key:/etc/mongo/mongo-keyfile:ro
+
+  # cassandra-seed:
+  #   image: cassandra:latest
+  #   ports:
+  #     - "9042:9042"
+  #   environment:
+  #     - CASSANDRA_CLUSTER_NAME=TestCluster
+  #     - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+  #   volumes:
+  #     # - ./conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
+  #     - /home/jefer/dev/benchmarks/databases/python/conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
+
+  # cassandra-node1:
+  #   image: cassandra:latest
+  #   ports:
+  #     - "9142:9042"
+  #   depends_on:
+  #     - cassandra-seed
+  #   environment:
+  #     - CASSANDRA_SEEDS=cassandra-seed
+  #     - CASSANDRA_CLUSTER_NAME=TestCluster
+  #     - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+  #   volumes:
+  #     # - ./conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
+  #     - /home/jefer/dev/benchmarks/databases/python/conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
+
+  # cassandra-node2:
+  #   image: cassandra:latest
+  #   ports:
+  #     - "9242:9042"
+  #   depends_on:
+  #     - cassandra-seed
+  #   environment:
+  #     - CASSANDRA_SEEDS=cassandra-seed
+  #     - CASSANDRA_CLUSTER_NAME=TestCluster
+  #     - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+  #   volumes:
+  #     # - ./conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
+  #     - /home/jefer/dev/benchmarks/databases/python/conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
+
+  scylla-seed:
+    image: scylladb/scylla:latest
+    network_mode: "host"
+    ports:
+      - "10042:9042"
+    volumes:
+      - /home/jefer/dev/benchmarks/databases/python/conf/scylla/sysctl.conf:/etc/sysctl.conf:ro
+      - /home/jefer/dev/benchmarks/.cache/scylla-seed:/var/lib/scylla/data
+
+  scylla-node1:
+    image: scylladb/scylla:latest
+    network_mode: "host"
+    ports:
+      - "10142:9042"
+    command: --seeds=scylla-seed
+    volumes:
+      - /home/jefer/dev/benchmarks/databases/python/conf/scylla/sysctl.conf:/etc/sysctl.conf:ro
+      - /home/jefer/dev/benchmarks/.cache/scylla1:/var/lib/scylla/data
+
+  scylla-node2:
+    image: scylladb/scylla:latest
+    network_mode: "host"
+    ports:
+      - "10242:9042"
+    command: --seeds=scylla-seed
+    volumes:
+      - /home/jefer/dev/benchmarks/databases/python/conf/scylla/sysctl.conf:/etc/sysctl.conf:ro
+      - /home/jefer/dev/benchmarks/.cache/scylla2:/var/lib/scylla/data
+
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: example
+
+  # mysql:
+  #   image: mysql:latest
+  #   ports:
+  #     - "3306:3306"
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: example
+
+  # neo4j:
+  #   image: neo4j:latest
+  #   ports:
+  #     - "7474:7474"
+  #     - "7687:7687"
+  #   environment:
+  #     NEO4J_AUTH: neo4j/example
+
+  # arangodb:
+  #   image: arangodb/arangodb:latest
+  #   ports:
+  #     - "8529:8529"
+  #   environment:
+  #     ARANGO_ROOT_PASSWORD: example
+
+  # hbase:
+  #   image: dajobe/hbase
+  #   container_name: hbase-docker
+  #   ports:
+  #     - "16000:16000"   # Master RPC port
+  #     - "16010:16010"   # Master Web UI
+  #     - "16020:16020"   # RegionServer RPC port
+  #     - "16030:16030"   # RegionServer Web UI
+  #     - "2181:2181"     # ZooKeeper client port
+  #   environment:
+  #     - HBASE_MANAGES_ZK=true
+
+
+
+volumes:
+  mongodata1:
+  mongodata2:
+  mongodata3:
