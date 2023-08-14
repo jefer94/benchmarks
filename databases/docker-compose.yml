@@ -1,41 +1,65 @@
 version: '3'
 
 services:
-  mongo1:
+  mongo:
     image: mongo:latest
-    ports:
-      - "27011:27017"
-    command: --replSet my-mongo-set --keyFile /etc/mongo/mongo-keyfile
+    container_name: mongo_container
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+    ports:
+      - "27017:27017"
     volumes:
       - mongodata1:/data/db
-      - /home/jefer/dev/benchmarks/databases/python/conf/mongo/key:/etc/mongo/mongo-keyfile:ro
 
-  mongo2:
-    image: mongo:latest
-    ports:
-      - "27012:27017"
-    command: --replSet my-mongo-set --keyFile /etc/mongo/mongo-keyfile
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    volumes:
-      - mongodata2:/data/db
-      - /home/jefer/dev/benchmarks/databases/python/conf/mongo/key:/etc/mongo/mongo-keyfile:ro
+  # mongo1:
+  #   image: mongo:latest
+  #   ports:
+  #     - "27011:27017"
+  #   command: --replSet my-mongo-set --keyFile /etc/mongo/mongo-keyfile
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: example
+  #   volumes:
+  #     - mongodata1:/data/db
+  #     - /home/jefer/dev/benchmarks/databases/python/conf/mongo/key:/etc/mongo/mongo-keyfile:ro
 
-  mongo3:
-    image: mongo:latest
+  # mongo2:
+  #   image: mongo:latest
+  #   ports:
+  #     - "27012:27017"
+  #   command: --replSet my-mongo-set --keyFile /etc/mongo/mongo-keyfile
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: example
+  #   volumes:
+  #     - mongodata2:/data/db
+  #     - /home/jefer/dev/benchmarks/databases/python/conf/mongo/key:/etc/mongo/mongo-keyfile:ro
+
+  # mongo3:
+  #   image: mongo:latest
+  #   ports:
+  #     - "27013:27017"
+  #   command: --replSet my-mongo-set --keyFile /etc/mongo/mongo-keyfile
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: example
+  #   volumes:
+  #     - mongodata3:/data/db
+  #     - /home/jefer/dev/benchmarks/databases/python/conf/mongo/key:/etc/mongo/mongo-keyfile:ro
+
+  cassandra:
+    image: cassandra:latest
     ports:
-      - "27013:27017"
-    command: --replSet my-mongo-set --keyFile /etc/mongo/mongo-keyfile
+      - "9042:9042"
+    command:
+      - "--smp 10"
+      - "--memory 3G"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      - CASSANDRA_CLUSTER_NAME=TestCluster
     volumes:
-      - mongodata3:/data/db
-      - /home/jefer/dev/benchmarks/databases/python/conf/mongo/key:/etc/mongo/mongo-keyfile:ro
+      - cassandra-data:/var/lib/cassandra
+      - /home/jefer/dev/benchmarks/databases/python/conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
 
   # cassandra-seed:
   #   image: cassandra:latest
@@ -76,34 +100,54 @@ services:
   #     # - ./conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
   #     - /home/jefer/dev/benchmarks/databases/python/conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
 
-  scylla-seed:
+  scylla:
     image: scylladb/scylla:latest
-    network_mode: "host"
+    container_name: scylla
     ports:
-      - "10042:9042"
+      - "19042:9042"
+      # - "19160:9160"
+      # - "19180:9180"
+      # - "110000:10000"
     volumes:
-      - /home/jefer/dev/benchmarks/databases/python/conf/scylla/sysctl.conf:/etc/sysctl.conf:ro
-      - /home/jefer/dev/benchmarks/.cache/scylla-seed:/var/lib/scylla/data
+      - scylla_data:/var/lib/scylla
+    command:
+      - "--smp 10"
+      - "--memory 3G"
+    environment:
+      - SCYLLA_ARGS=--developer-mode=1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
 
-  scylla-node1:
-    image: scylladb/scylla:latest
-    network_mode: "host"
-    ports:
-      - "10142:9042"
-    command: --seeds=scylla-seed
-    volumes:
-      - /home/jefer/dev/benchmarks/databases/python/conf/scylla/sysctl.conf:/etc/sysctl.conf:ro
-      - /home/jefer/dev/benchmarks/.cache/scylla1:/var/lib/scylla/data
+  # scylla-seed:
+  #   image: scylladb/scylla:latest
+  #   network_mode: "host"
+  #   ports:
+  #     - "10042:9042"
+  #   volumes:
+  #     - /home/jefer/dev/benchmarks/databases/python/conf/scylla/sysctl.conf:/etc/sysctl.conf:ro
+  #     - /home/jefer/dev/benchmarks/.cache/scylla-seed:/var/lib/scylla/data
 
-  scylla-node2:
-    image: scylladb/scylla:latest
-    network_mode: "host"
-    ports:
-      - "10242:9042"
-    command: --seeds=scylla-seed
-    volumes:
-      - /home/jefer/dev/benchmarks/databases/python/conf/scylla/sysctl.conf:/etc/sysctl.conf:ro
-      - /home/jefer/dev/benchmarks/.cache/scylla2:/var/lib/scylla/data
+  # scylla-node1:
+  #   image: scylladb/scylla:latest
+  #   network_mode: "host"
+  #   ports:
+  #     - "10142:9042"
+  #   command: --seeds=scylla-seed
+  #   volumes:
+  #     - /home/jefer/dev/benchmarks/databases/python/conf/scylla/sysctl.conf:/etc/sysctl.conf:ro
+  #     - /home/jefer/dev/benchmarks/.cache/scylla1:/var/lib/scylla/data
+
+  # scylla-node2:
+  #   image: scylladb/scylla:latest
+  #   network_mode: "host"
+  #   ports:
+  #     - "10242:9042"
+  #   command: --seeds=scylla-seed
+  #   volumes:
+  #     - /home/jefer/dev/benchmarks/databases/python/conf/scylla/sysctl.conf:/etc/sysctl.conf:ro
+  #     - /home/jefer/dev/benchmarks/.cache/scylla2:/var/lib/scylla/data
 
   postgres:
     image: postgres:latest
@@ -152,3 +196,5 @@ volumes:
   mongodata1:
   mongodata2:
   mongodata3:
+  scylla_data:
+  cassandra-data:

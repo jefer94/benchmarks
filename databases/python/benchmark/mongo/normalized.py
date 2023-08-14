@@ -16,7 +16,7 @@ notifications = {}
 def setup():
     global notifications, users, users_collection, notifications_collection, products_collection
 
-    client = MongoClient("localhost", 27011, username="root", password="example")
+    client = MongoClient("localhost", 27017, username="root", password="example")
     # config = {
     #     "_id": "my-mongo-set",
     #     "members": [
@@ -27,9 +27,9 @@ def setup():
     # }
 
     # client.admin.command("replSetInitiate", config)
-    client.admin.command("replSetInitiate")
-    client.admin.command("replSetAdd", "mongo2:27017")
-    client.admin.command("replSetAdd", "mongo3:27017")
+    # client.admin.command("replSetInitiate")
+    # client.admin.command("replSetAdd", "mongo2:27017")
+    # client.admin.command("replSetAdd", "mongo3:27017")
 
     db = client["test_db"]
     users_collection = db["users"]
@@ -129,22 +129,22 @@ def delete():
 def main():
     total = 0
     time_took = timeit.repeat(insert, setup=setup, repeat=REPEAT, number=NUMBER)
-    print(f"Insert took {(sum(time_took) / len(time_took)):.6f} seconds")
+    print(f"- Insert took {(sum(time_took) / len(time_took)):.6f} seconds")
     total += sum(time_took) / len(time_took)
 
     time_took = timeit.repeat(select, setup=setup, repeat=REPEAT, number=NUMBER)
-    print(f"Select took {(sum(time_took) / len(time_took)):.6f} seconds")
+    print(f"- Select took {(sum(time_took) / len(time_took)):.6f} seconds")
     total += sum(time_took) / len(time_took)
 
     time_took = timeit.repeat(update, setup=setup, repeat=REPEAT, number=NUMBER)
-    print(f"Update took {(sum(time_took) / len(time_took)):.6f} seconds")
+    print(f"- Update took {(sum(time_took) / len(time_took)):.6f} seconds")
     total += sum(time_took) / len(time_took)
 
     time_took = timeit.repeat(delete, setup=setup, repeat=REPEAT, number=NUMBER)
-    print(f"Delete took {(sum(time_took) / len(time_took)):.6f} seconds")
+    print(f"- Delete took {(sum(time_took) / len(time_took)):.6f} seconds")
     total += sum(time_took) / len(time_took)
 
-    print(f"Total took {total:.6f} seconds")
+    print(f"- Total took {total:.6f} seconds")
 
 
 if __name__ == "__main__":

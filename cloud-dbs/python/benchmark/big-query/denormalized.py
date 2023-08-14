@@ -109,17 +109,17 @@ def main():
 
     # Measure insert
     time_took = timeit.repeat(insert, setup=setup, repeat=REPEAT, number=NUMBER)
-    print(f"Insert took {(sum(time_took) / len(time_took)):.6f} seconds")
+    print(f"- Insert took {(sum(time_took) / len(time_took)):.6f} seconds")
     total += sum(time_took) / len(time_took)
 
     # Measure select
     time_took = timeit.repeat(select, setup=setup, repeat=REPEAT, number=NUMBER)
-    print(f"Select took {(sum(time_took) / len(time_took)):.6f} seconds")
+    print(f"- Select took {(sum(time_took) / len(time_took)):.6f} seconds")
     total += sum(time_took) / len(time_took)
 
     # For Update and Delete: Since BigQuery doesn't handle these operations in traditional manners, you might skip them or handle them differently.
 
-    print(f"Total took {total:.6f} seconds")
+    print(f"- Total took {total:.6f} seconds")
 
 
 if __name__ == "__main__":

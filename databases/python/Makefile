@@ -1,19 +1,14 @@
 .PHONY: all
 
-# all: mongo cassandra scylla
-# all: mongo scylla
-# all: postgres
-# all: scylla
-# all: mongo scylla
-all: mongo
+all: setup mongo cassandra scylla postgre
 
 setup:
-	echo A
+	@echo "# Benchmarks"
 
 
 scylla:
 	@echo ""
-	@echo "# Scylla benchmark..."
+	@echo "## Scylla"
 
 	@echo ""
 	@echo "Normalized:"
@@ -30,7 +25,7 @@ scylla:
 
 cassandra:
 	@echo ""
-	@echo "# Cassandra benchmark..."
+	@echo "## Apache Cassandra"
 
 	@echo ""
 	@echo "Normalized:"
@@ -47,7 +42,7 @@ cassandra:
 
 mongo:
 	@echo ""
-	@echo "# Mongo benchmark..."
+	@echo "## MongoDB"
 
 	@echo ""
 	@echo "Normalized:"
@@ -58,9 +53,9 @@ mongo:
 	@python -m benchmark.mongo.denormalized
 
 
-postgres:
+postgre:
 	@echo ""
-	@echo "# Postgres benchmark..."
+	@echo "## PostgreSQL"
 
 	@echo ""
 	@echo "Normalized:"

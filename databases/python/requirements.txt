@@ -1,0 +1,18 @@
+## The following requirements were added by pip freeze:
+black==23.7.0
+cassandra-driver==3.28.0
+click==8.1.6
+dnspython==2.4.2
+Faker==19.3.0
+geomet==0.2.1.post1
+greenlet==2.0.2
+mypy-extensions==1.0.0
+packaging==23.1
+pathspec==0.11.2
+platformdirs==3.10.0
+psycopg2-binary==2.9.7
+pymongo==4.4.1
+python-dateutil==2.8.2
+six==1.16.0
+SQLAlchemy==2.0.19
+typing_extensions==4.7.1

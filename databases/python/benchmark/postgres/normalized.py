@@ -8,8 +8,14 @@ from ..params import REPEAT, NUMBER, ACTIVITIES
 Base = declarative_base()
 fake = Faker()
 
-engine = create_engine("postgresql://postgres:example@localhost:5432/postgres", pool_size=40, max_overflow=80)
+engine = create_engine(
+    "postgresql://postgres:example@localhost:5432/postgres",
+    pool_size=1000,
+    max_overflow=2000,
+    connect_args={"connect_timeout": 10},
+)
 Session = sessionmaker(bind=engine)
+session = Session()
 
 
 class User(Base):
@@ -32,7 +38,7 @@ class Notification(Base):
     __tablename__ = "notifications"
     id = Column(Integer, primary_key=True)
     kind = Column(String)
-    external_id = Column(Integer, ForeignKey("products.id"))
+    external_id = Column(String)
     user_id = Column(Integer, ForeignKey("users.id"))
     not_before = Column(DateTime)
     expires_at = Column(DateTime)
@@ -41,96 +47,122 @@ class Notification(Base):
     status = Column(String)
 
 
+drop = True
+users = []
+notifications = {}
+
+
 def setup():
-    Base.metadata.drop_all(engine)
-    Base.metadata.create_all(engine)
+    global users, notifications, session, drop
+
+    if drop:
+        Base.metadata.drop_all(engine)
+        Base.metadata.create_all(engine)
+        drop = False
 
 
 def insert():
-    session = Session()
     user = User(
-        email=fake.email(), username=fake.slug(), first_name=fake.first_name(), last_name=fake.last_name()
+        email=fake.email(),
+        username=fake.slug(),
+        first_name=fake.first_name(),
+        last_name=fake.last_name(),
     )
     session.add(user)
-    session.flush()
+    session.commit()
+
+    users.append(user.id)
 
     for _ in range(ACTIVITIES):
         product = Product(name="John Doe", amount=100)
         session.add(product)
-        session.flush()
+        session.commit()
 
-        expires_at = timedelta(days=1, hours=2, minutes=30, seconds=0)
-        not_before = timedelta(days=0, hours=2, minutes=30, seconds=0)
+        expires_at = datetime.utcnow() + timedelta(days=1, hours=2, minutes=30)
+        not_before = datetime.utcnow() + timedelta(hours=2, minutes=30)
 
         notification = Notification(
             kind="PRODUCT",
             external_id=product.id,
             user_id=user.id,
-            not_before=datetime.utcnow() + not_before,
-            expires_at=datetime.utcnow() + expires_at,
+            not_before=not_before,
+            expires_at=expires_at,
             subject="Your product is ready",
             message="Your product is ready to be picked up",
             status="NEW",
         )
         session.add(notification)
+        session.commit()
 
-    session.commit()
-    session.close()
+        if user.id not in notifications:
+            notifications[user.id] = []
+        notifications[user.id].append(notification.id)
 
 
 def select():
-    session = Session()
-    for user in session.query(User).all():
-        for notification in session.query(Notification).filter_by(user_id=user.id).all():
-            pass  # Do something with the notification if needed
-    session.close()
+    user_id = users.pop(0)
+    user = session.query(User).filter_by(id=user_id).first()
+
+    for notification_id in notifications[user_id]:
+        for _ in session.query(Notification).filter_by(id=notification_id):
+            pass
+
+    users.append(user_id)
 
 
 def update():
-    session = Session()
-    for user in session.query(User).all():
+    user_id = users.pop(0)
+    user = session.query(User).filter_by(id=user_id).first()
+    if user:
         user.email = fake.email()
         user.username = fake.slug()
         user.first_name = fake.first_name()
         user.last_name = fake.last_name()
+        session.commit()
 
-        for notification in session.query(Notification).filter_by(user_id=user.id).all():
+    for notification_id in notifications[user_id]:
+        notification = session.query(Notification).filter_by(id=notification_id).first()
+        if notification:
             notification.status = "SENT"
+            session.commit()
 
-    session.commit()
-    session.close()
+    users.append(user_id)
 
 
 def delete():
-    session = Session()
-    for user in session.query(User).all():
-        for notification in session.query(Notification).filter_by(user_id=user.id).all():
-            session.delete(notification)
-        session.delete(user)
+    user_id = users.pop(0)
 
-    session.commit()
-    session.close()
+    for notification_id in notifications[user_id]:
+        notification = session.query(Notification).filter_by(id=notification_id).first()
+        if notification:
+            session.delete(notification)
+            session.commit()
+
+    user = session.query(User).filter_by(id=user_id).first()
+    if user:
+        session.delete(user)
+        session.commit()
 
 
 def main():
     total = 0
     time_took = timeit.repeat(insert, setup=setup, repeat=REPEAT, number=NUMBER)
-    print(f"Insert took {(sum(time_took) / len(time_took)):.6f} seconds")
+    print(f"- Insert took {(sum(time_took) / len(time_took)):.6f} seconds")
     total += sum(time_took) / len(time_took)
 
     time_took = timeit.repeat(select, setup=setup, repeat=REPEAT, number=NUMBER)
-    print(f"Select took {(sum(time_took) / len(time_took)):.6f} seconds")
+    print(f"- Select took {(sum(time_took) / len(time_took)):.6f} seconds")
     total += sum(time_took) / len(time_took)
 
     time_took = timeit.repeat(update, setup=setup, repeat=REPEAT, number=NUMBER)
-    print(f"Update took {(sum(time_took) / len(time_took)):.6f} seconds")
+    print(f"- Update took {(sum(time_took) / len(time_took)):.6f} seconds")
     total += sum(time_took) / len(time_took)
 
     time_took = timeit.repeat(delete, setup=setup, repeat=REPEAT, number=NUMBER)
-    print(f"Delete took {(sum(time_took) / len(time_took)):.6f} seconds")
+    print(f"- Delete took {(sum(time_took) / len(time_took)):.6f} seconds")
     total += sum(time_took) / len(time_took)
 
-    print(f"Total took {total:.6f} seconds")
+    print(f"- Total took {total:.6f} seconds")
 
 
 if __name__ == "__main__":
