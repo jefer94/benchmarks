@@ -54,12 +54,13 @@ services:
       - "9042:9042"
     command:
       - "--smp 10"
-      - "--memory 3G"
+      - "--memory 4G"
     environment:
       - CASSANDRA_CLUSTER_NAME=TestCluster
     volumes:
       - cassandra-data:/var/lib/cassandra
-      - /home/jefer/dev/benchmarks/databases/python/conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
+      # - ./conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
+      # - /home/jefer/dev/benchmarks/databases/python/conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
 
   # cassandra-seed:
   #   image: cassandra:latest
@@ -112,7 +113,7 @@ services:
       - scylla_data:/var/lib/scylla
     command:
       - "--smp 10"
-      - "--memory 3G"
+      - "--memory 4G"
     environment:
       - SCYLLA_ARGS=--developer-mode=1
     logging:
