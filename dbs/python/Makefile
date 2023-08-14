@@ -4,6 +4,7 @@ all: setup mongo cassandra scylla postgre
 
 setup:
 	@echo "# Benchmarks"
+	@. .venv/bin/activate
 
 
 scylla:

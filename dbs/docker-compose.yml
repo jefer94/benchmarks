@@ -53,13 +53,20 @@ services:
     ports:
       - "9042:9042"
     command:
-      - "--smp 10"
-      - "--memory 4G"
+      - "--smp 20"
+      - "--memory 10G"
     environment:
       - CASSANDRA_CLUSTER_NAME=TestCluster
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_DC=datacenter1
+      - CASSANDRA_RACK=rack1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
     volumes:
       - cassandra-data:/var/lib/cassandra
-      # - ./conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
+      - ./conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
       # - /home/jefer/dev/benchmarks/databases/python/conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
 
   # cassandra-seed:
@@ -112,10 +119,11 @@ services:
     volumes:
       - scylla_data:/var/lib/scylla
     command:
-      - "--smp 10"
-      - "--memory 4G"
+      - "--smp 20"
+      - "--memory 10G"
     environment:
       - SCYLLA_ARGS=--developer-mode=1
+      - SCYLLA_IO_SETUP=1
     logging:
       driver: "json-file"
       options:
