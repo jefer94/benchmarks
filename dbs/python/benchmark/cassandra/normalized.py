@@ -78,6 +78,8 @@ def setup():
         sync_table(Notification)
         sync_table(Product)
 
+        time.sleep(10)
+
 
 def insert():
     user = User.create(

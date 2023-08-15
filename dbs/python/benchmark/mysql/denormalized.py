@@ -1,95 +1,76 @@
 from datetime import datetime, timedelta
-import time
-from cassandra.cluster import Cluster
-from cassandra.cqlengine import connection
-from cassandra.cqlengine.management import sync_table
-from cassandra.cqlengine.models import Model
-from cassandra.cqlengine import columns
-import timeit
 import uuid
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, CHAR
+from sqlalchemy.orm import sessionmaker, declarative_base
+import timeit
 from faker import Faker
-from cassandra.cqlengine.models import QuerySetDescriptor
 from ..params import REPEAT, NUMBER, ACTIVITIES
 
+Base = declarative_base()
 fake = Faker()
 
-
-class Notification(Model):
-    __keyspace__ = "test"
-    objects: QuerySetDescriptor
-
-    kind = columns.Text(partition_key=True)
-    external_id = columns.UUID(partition_key=True)
-
-    not_before = columns.DateTime(primary_key=True)
-    expires_at = columns.DateTime(primary_key=True)
-    subject = columns.Text(primary_key=True)
-    message = columns.Text(primary_key=True)
-
-    status = columns.Text(static=True)
-
-    # user related fields
-    email = columns.Text()
-    username = columns.Text()
-    first_name = columns.Text()
-    last_name = columns.Text()
+engine = create_engine(
+    "mysql+pymysql://postgres:example@localhost:3306/postgres",
+    pool_size=1000,
+    max_overflow=2000,
+    connect_args={"connect_timeout": 10},
+)
+Session = sessionmaker(bind=engine)
+session = Session()
 
 
-cluster = None
+class Notification(Base):
+    __tablename__ = "notifications"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer)
+    kind = Column(String(20))
+    external_id = Column(CHAR(36))
+    not_before = Column(DateTime)
+    expires_at = Column(DateTime)
+    subject = Column(String(60))
+    message = Column(String(60))
+    status = Column(String(20))
+    email = Column(String(60))
+    username = Column(String(30))
+    first_name = Column(String(60))
+    last_name = Column(String(60))
+
+
+drop = True
 users = []
-notifications: dict[str, list] = {}
+notifications = {}
 
 
 def setup():
-    global cluster, notifications, users
-    if not cluster:
-        cluster = Cluster(contact_points=["localhost"], port=9042)
+    global users, notifications, session, drop
 
-        session = cluster.connect()
-        # session.set_keyspace("testkeyspace")
-        connection.set_session(session)
-
-        users = []
-        notifications = {}
-        session.execute("DROP MATERIALIZED VIEW IF EXISTS test.notification_view")
-        session.execute(
-            "CREATE KEYSPACE IF NOT EXISTS test WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 }"
-        )
-        session.set_keyspace("test")
-        session.execute("DROP TABLE IF EXISTS test.notification")
-
-        sync_table(Notification)
-        time.sleep(10)
+    if drop:
+        Base.metadata.drop_all(engine)
+        Base.metadata.create_all(engine)
+        drop = False
 
 
-id = 0
+users = []
+notifications: dict[int, list] = {}
 
 
 def insert():
-    global id
-    id += 1
-
+    session = Session()
+    user_id = len(users) + 1
     user = {
-        "id": id,
+        "id": user_id,
         "email": fake.email(),
         "username": fake.slug(),
         "first_name": fake.first_name(),
         "last_name": fake.last_name(),
     }
-
-    users.append(user["id"])
+    users.append(user_id)
 
     for _ in range(ACTIVITIES):
-        # Create a timedelta object
         expires_at = timedelta(days=1, hours=2, minutes=30, seconds=0)
         not_before = timedelta(days=0, hours=2, minutes=30, seconds=0)
-
-        # Convert timedelta to seconds
-        ttl_seconds = int(expires_at.total_seconds())
-
         product_id = uuid.uuid4()
-
-        Notification.create(
+        notification = Notification(
             kind="PRODUCT",
             external_id=product_id,
             not_before=datetime.utcnow() + not_before,
@@ -101,7 +82,8 @@ def insert():
             username=user["username"],
             first_name=user["first_name"],
             last_name=user["last_name"],
-        ).ttl(ttl_seconds)
+        )
+        session.add(notification)
 
         if user["id"] not in notifications:
             notifications[user["id"]] = []
@@ -113,39 +95,53 @@ def insert():
             }
         )
 
+    session.commit()
+
 
 def select():
     user_id = users.pop(0)
+    session = Session()
     for kwargs in notifications[user_id]:
-        for _ in Notification.objects(**kwargs):
+        notification = session.query(Notification).filter(
+            Notification.kind == kwargs["kind"], Notification.external_id == kwargs["external_id"]
+        )
+        for _ in notification.all():
             pass
-
     users.append(user_id)
 
 
 def update():
     user_id = users.pop(0)
+    session = Session()
+
     for kwargs in notifications[user_id]:
-        for x in Notification.objects(**kwargs):
-            x.update(
-                status="SENT",
-                email=fake.email(),
-                username=fake.slug(),
-                first_name=fake.first_name(),
-                last_name=fake.last_name(),
-            )
+        l = session.query(Notification).filter(
+            Notification.kind == kwargs["kind"], Notification.external_id == kwargs["external_id"]
+        )
+        for notification in l:
+            notification.status = "SENT"
+            notification.email = fake.email()
+            notification.username = fake.slug()
+            notification.first_name = fake.first_name()
+            notification.last_name = fake.last_name()
+
     users.append(user_id)
+    session.commit()
 
 
 def delete():
     user_id = users.pop(0)
+    session = Session()
     for kwargs in notifications[user_id]:
-        for x in Notification.objects(**kwargs):
-            x.delete()
+        l = session.query(Notification).filter(
+            Notification.kind == kwargs["kind"], Notification.external_id == kwargs["external_id"]
+        )
+        for notification in l:
+            session.delete(notification)
+    session.commit()
 
-    users.append(user_id)
 
-
+# ... Remaining code (like the main function) stays the same.
 def main():
     total = 0
     time_took = timeit.repeat(insert, setup=setup, repeat=REPEAT, number=NUMBER)

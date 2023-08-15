@@ -69,44 +69,47 @@ services:
       - ./conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
       # - /home/jefer/dev/benchmarks/databases/python/conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
 
-  # cassandra-seed:
+  # cassandra2:
   #   image: cassandra:latest
   #   ports:
-  #     - "9042:9042"
+  #     - "9043:9042"
+  #   command:
+  #     - "--smp 20"
+  #     - "--memory 10G"
   #   environment:
+  #     - CASSANDRA_SEEDS=cassandra
   #     - CASSANDRA_CLUSTER_NAME=TestCluster
   #     - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+  #     - CASSANDRA_DC=datacenter1
+  #     - CASSANDRA_RACK=rack1
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "500m"
   #   volumes:
-  #     # - ./conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
-  #     - /home/jefer/dev/benchmarks/databases/python/conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
+  #     - cassandra-data2:/var/lib/cassandra
+  #     - ./conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
 
-  # cassandra-node1:
+  # cassandra3:
   #   image: cassandra:latest
   #   ports:
-  #     - "9142:9042"
-  #   depends_on:
-  #     - cassandra-seed
+  #     - "9044:9042"
+  #   command:
+  #     - "--smp 20"
+  #     - "--memory 10G"
   #   environment:
-  #     - CASSANDRA_SEEDS=cassandra-seed
+  #     - CASSANDRA_SEEDS=cassandra
   #     - CASSANDRA_CLUSTER_NAME=TestCluster
   #     - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+  #     - CASSANDRA_DC=datacenter1
+  #     - CASSANDRA_RACK=rack1
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "500m"
   #   volumes:
-  #     # - ./conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
-  #     - /home/jefer/dev/benchmarks/databases/python/conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
-
-  # cassandra-node2:
-  #   image: cassandra:latest
-  #   ports:
-  #     - "9242:9042"
-  #   depends_on:
-  #     - cassandra-seed
-  #   environment:
-  #     - CASSANDRA_SEEDS=cassandra-seed
-  #     - CASSANDRA_CLUSTER_NAME=TestCluster
-  #     - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
-  #   volumes:
-  #     # - ./conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
-  #     - /home/jefer/dev/benchmarks/databases/python/conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
+  #     - cassandra-data3:/var/lib/cassandra
+  #     - ./conf/cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
 
   scylla:
     image: scylladb/scylla:latest
@@ -115,12 +118,12 @@ services:
       - "19042:9042"
       # - "19160:9160"
       # - "19180:9180"
-      # - "110000:10000"
+      - "10010:10000"
     volumes:
       - scylla_data:/var/lib/scylla
     command:
-      - "--smp 20"
-      - "--memory 10G"
+      - "--smp 7"
+      - "--memory 4G"
     environment:
       - SCYLLA_ARGS=--developer-mode=1
       - SCYLLA_IO_SETUP=1
@@ -128,35 +131,55 @@ services:
       driver: "json-file"
       options:
         max-size: "500m"
+    networks:
+      scylla:
 
-  # scylla-seed:
+  
+  # scylla2:
   #   image: scylladb/scylla:latest
-  #   network_mode: "host"
   #   ports:
-  #     - "10042:9042"
+  #     - "19043:9042"
+  #     # - "19160:9160"
+  #     # - "19180:9180"
+  #     - "10011:10000"
   #   volumes:
-  #     - /home/jefer/dev/benchmarks/databases/python/conf/scylla/sysctl.conf:/etc/sysctl.conf:ro
-  #     - /home/jefer/dev/benchmarks/.cache/scylla-seed:/var/lib/scylla/data
+  #     - scylla_data2:/var/lib/scylla
+  #   command:
+  #     - "--smp 7"
+  #     - "--memory 4G"
+  #     - "--seeds=scylla"
+  #   environment:
+  #     - SCYLLA_ARGS=--developer-mode=1
+  #     - SCYLLA_IO_SETUP=1
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "500m"
+  #   networks:
+  #     scylla:
 
-  # scylla-node1:
+  # scylla3:
   #   image: scylladb/scylla:latest
-  #   network_mode: "host"
   #   ports:
-  #     - "10142:9042"
-  #   command: --seeds=scylla-seed
+  #     - "19044:9042"
+  #     # - "19160:9160"
+  #     # - "19180:9180"
+  #     - "10012:10000"
   #   volumes:
-  #     - /home/jefer/dev/benchmarks/databases/python/conf/scylla/sysctl.conf:/etc/sysctl.conf:ro
-  #     - /home/jefer/dev/benchmarks/.cache/scylla1:/var/lib/scylla/data
-
-  # scylla-node2:
-  #   image: scylladb/scylla:latest
-  #   network_mode: "host"
-  #   ports:
-  #     - "10242:9042"
-  #   command: --seeds=scylla-seed
-  #   volumes:
-  #     - /home/jefer/dev/benchmarks/databases/python/conf/scylla/sysctl.conf:/etc/sysctl.conf:ro
-  #     - /home/jefer/dev/benchmarks/.cache/scylla2:/var/lib/scylla/data
+  #     - scylla_data3:/var/lib/scylla
+  #   command:
+  #     - "--smp 6"
+  #     - "--memory 4G"
+  #     - "--seeds=scylla"
+  #   environment:
+  #     - SCYLLA_ARGS=--developer-mode=1
+  #     - SCYLLA_IO_SETUP=1
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "500m"
+  #   networks:
+  #     scylla:
 
   postgres:
     image: postgres:latest
@@ -165,12 +188,25 @@ services:
     environment:
       POSTGRES_PASSWORD: example
 
-  # mysql:
-  #   image: mysql:latest
-  #   ports:
-  #     - "3306:3306"
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: example
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: postgres
+      MYSQL_USER: postgres
+      MYSQL_PASSWORD: example
+
+  mariadb:
+    image: mariadb:latest
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: postgres
+      MYSQL_USER: postgres
+      MYSQL_PASSWORD: example
 
   # neo4j:
   #   image: neo4j:latest
@@ -187,17 +223,74 @@ services:
   #   environment:
   #     ARANGO_ROOT_PASSWORD: example
 
-  # hbase:
-  #   image: dajobe/hbase
-  #   container_name: hbase-docker
-  #   ports:
-  #     - "16000:16000"   # Master RPC port
-  #     - "16010:16010"   # Master Web UI
-  #     - "16020:16020"   # RegionServer RPC port
-  #     - "16030:16030"   # RegionServer Web UI
-  #     - "2181:2181"     # ZooKeeper client port
-  #   environment:
-  #     - HBASE_MANAGES_ZK=true
+  hbase:
+    image: dajobe/hbase
+    container_name: hbase-docker
+    ports:
+      - "16000:16000"   # Master RPC port
+      - "16010:16010"   # Master Web UI
+      - "16020:16020"   # RegionServer RPC port
+      - "16030:16030"   # RegionServer Web UI
+      - "2181:2181"     # ZooKeeper client port
+      - "9090:9090"
+    environment:
+      - HBASE_MANAGES_ZK=true
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./conf/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - '9091:9090'
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - '3000:3000'
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+  cadvisor:
+    image: google/cadvisor:latest
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - '8080:8080'
+
+  couchbase:
+    image: couchbase:latest
+    ports:
+      - "8091-8094:8091-8094"
+      - "11210:11210"
+    environment:
+      - COUCHBASE_SERVER_MEMORY_QUOTA=512
+      - COUCHBASE_CLUSTER_RAMSIZE=512
+      - COUCHBASE_CLUSTER_NAME=my-cluster
+      - COUCHBASE_CLUSTER_USERNAME=admin
+      - COUCHBASE_CLUSTER_PASSWORD=password
+      - COUCHBASE_BUCKET=default
+      - COUCHBASE_BUCKET_TYPE=couchbase
+      - COUCHBASE_BUCKET_RAMSIZE=128
+      - COUCHBASE_RBAC_USERNAME=myuser
+      - COUCHBASE_RBAC_PASSWORD=mypassword
+      - COUCHBASE_RBAC_ROLE=bucket_full_access[*]
+    volumes:
+      - couchbase-data:/opt/couchbase/var
+
+  couchdb:
+    image: couchdb:latest
+    ports:
+      - "5984:5984"
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=password
+    volumes:
+      - couchdb-data:/opt/couchdb/data
 
 
 
@@ -206,4 +299,15 @@ volumes:
   mongodata2:
   mongodata3:
   scylla_data:
+  scylla_data2:
+  scylla_data3:
   cassandra-data:
+  cassandra-data2:
+  cassandra-data3:
+  grafana_data:
+  couchbase-data:
+  couchdb-data:
+
+networks:
+  scylla:
+    driver: bridge

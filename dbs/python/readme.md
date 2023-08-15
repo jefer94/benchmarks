@@ -1,79 +1,133 @@
 # Benchmarks
 
-## MongoDB
+## Relational databases
+
+### PostgreSQL
 
 Normalized:
-- Insert took 0.146911 seconds
-- Select took 0.060957 seconds
-- Update took 0.070731 seconds
-- Delete took 0.057704 seconds
-- Total took 0.336303 seconds
+- Insert took 1.351837 seconds
+- Select took 0.121539 seconds
+- Update took 0.566995 seconds
+- Delete took 0.544552 seconds
+- Total took 2.584923 seconds
 
 Denormalized:
-- Insert took 0.079255 seconds
-- Select took 0.054621 seconds
-- Update took 0.127965 seconds
-- Delete took 0.047566 seconds
-- Total took 0.309407 seconds
+- Insert took 0.091469 seconds
+- Select took 0.255610 seconds
+- Update took 0.476220 seconds
+- Delete took 0.308292 seconds
+- Total took 1.131592 seconds
 
-## Apache Cassandra
+### MySQL
 
 Normalized:
-- Insert took 0.537338 seconds
-- Select took 0.287378 seconds
-- Update took 0.567351 seconds
-- Delete took 0.513734 seconds
-- Total took 1.905801 seconds
+- Insert took 2.595673 seconds
+- Select took 0.163980 seconds
+- Update took 1.190948 seconds
+- Delete took 1.123263 seconds
+- Total took 5.073863 seconds
 
 Denormalized:
-- Insert took 0.206198 seconds
-- Select took 0.258155 seconds
-- Update took 0.528348 seconds
-- Delete took 0.451063 seconds
-- Total took 1.443764 seconds
+- Insert took 0.179059 seconds
+- Select took 0.671804 seconds
+- Update took 0.670808 seconds
+- Delete took 0.650200 seconds
+- Total took 2.171870 seconds
+
+### MariaDB
+
+Normalized:
+- Insert took 1.426637 seconds
+- Select took 0.163204 seconds
+- Update took 0.620263 seconds
+- Delete took 0.553941 seconds
+- Total took 2.764045 seconds
+
+Denormalized:
+- Insert took 0.102323 seconds
+- Select took 0.571364 seconds
+- Update took 0.828115 seconds
+- Delete took 0.528161 seconds
+- Total took 2.029963 seconds
+
+## Document databases
+
+### MongoDB
+
+Normalized:
+- Insert took 0.151863 seconds
+- Select took 0.065632 seconds
+- Update took 0.080190 seconds
+- Delete took 0.057956 seconds
+- Total took 0.355642 seconds
+
+Denormalized:
+- Insert took 0.080627 seconds
+- Select took 0.065755 seconds
+- Update took 0.140136 seconds
+- Delete took 0.047680 seconds
+- Total took 0.334199 seconds
+
+## Wide-column store databases
+
+### Apache Cassandra
+
+Normalized:
+- Insert took 0.408187 seconds
+- Select took 0.256049 seconds
+- Update took 0.476884 seconds
+- Delete took 0.472108 seconds
+- Total took 1.613228 seconds
+
+Denormalized:
+- Insert took 0.208915 seconds
+- Select took 0.239401 seconds
+- Update took 0.550962 seconds
+- Delete took 0.427869 seconds
+- Total took 1.427146 seconds
 
 Materialized view denormalized:
-- Insert took 0.266798 seconds
-- Select took 0.261471 seconds
-- Update took 0.620968 seconds
-- Delete took 0.526993 seconds
-- Total took 1.676231 seconds
+- Insert took 0.228418 seconds
+- Select took 0.248262 seconds
+- Update took 0.592511 seconds
+- Delete took 0.468324 seconds
+- Total took 1.537515 seconds
 
-## Scylla
+### Scylla
 
 Normalized:
-- Insert took 0.342124 seconds
-- Select took 0.238698 seconds
-- Update took 0.386585 seconds
-- Delete took 0.378146 seconds
-- Total took 1.345553 seconds
+- Insert took 0.354200 seconds
+- Select took 0.214282 seconds
+- Update took 0.372551 seconds
+- Delete took 0.386429 seconds
+- Total took 1.327462 seconds
 
 Denormalized:
-- Insert took 0.206530 seconds
-- Select took 0.250133 seconds
-- Update took 0.527851 seconds
-- Delete took 0.353975 seconds
-- Total took 1.338490 seconds
+- Insert took 0.191769 seconds
+- Select took 0.225223 seconds
+- Update took 0.546197 seconds
+- Delete took 0.378927 seconds
+- Total took 1.342116 seconds
 
 Materialized view denormalized:
-- Insert took 0.222082 seconds
-- Select took 0.229672 seconds
-- Update took 0.570394 seconds
-- Delete took 0.434926 seconds
-- Total took 1.457073 seconds
+- Insert took 0.226647 seconds
+- Select took 0.208908 seconds
+- Update took 0.564151 seconds
+- Delete took 0.393889 seconds
+- Total took 1.393594 seconds
 
-## PostgreSQL
+### HBase
 
 Normalized:
-- Insert took 1.311502 seconds
-- Select took 0.110442 seconds
-- Update took 0.547565 seconds
-- Delete took 0.531207 seconds
-- Total took 2.500716 seconds
+- Insert took 0.169461 seconds
+- Select took 0.045451 seconds
+- Update took 0.094352 seconds
+- Delete took 0.146155 seconds
+- Total took 0.455419 seconds
 
 Denormalized:
-- Insert took 0.083305 seconds
-- Select took 0.254135 seconds
-- Update took 0.454685 seconds
-- Delete took 0.293414 seconds
-- Total took 1.085538 seconds
+- Insert took 0.099150 seconds
+- Select took 0.038581 seconds
+- Update took 0.156718 seconds
+- Delete took 0.140258 seconds
+- Total took 0.434707 seconds

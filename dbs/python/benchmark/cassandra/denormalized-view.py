@@ -90,6 +90,7 @@ def setup():
                 PRIMARY KEY ((kind, external_id), not_before, expires_at, subject, message);
             """
         )
+        time.sleep(10)
 
 
 id = 0
